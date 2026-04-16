@@ -2,8 +2,8 @@
 Collects training samples for the direction classifier.
 Usage: python training/collector.py
 
-For each direction the script shows a live camera feed alongside the HSV mask
-so you can verify that skin segmentation is working before capturing samples.
+For each direction the script shows a live camera feed with MediaPipe hand
+landmarks drawn so you can verify detection is working before capturing samples.
 Press SPACE to start capturing each class.
 """
 import cv2
@@ -25,9 +25,8 @@ def _preview_until_space(cap, segmenter, window):
         ret, frame = cap.read()
         if not ret:
             continue
-        mask = segmenter.get_mask(frame)
-        side_by_side = np.hstack([frame, cv2.cvtColor(mask, cv2.COLOR_GRAY2BGR)])
-        cv2.imshow(window, side_by_side)
+        annotated = segmenter.draw(frame)
+        cv2.imshow(window, annotated)
         if cv2.waitKey(1) & 0xFF == ord(' '):
             break
 
@@ -38,9 +37,8 @@ def _capture_samples(cap, segmenter, window):
         ret, frame = cap.read()
         if not ret:
             continue
-        mask = segmenter.get_mask(frame)
-        side_by_side = np.hstack([frame, cv2.cvtColor(mask, cv2.COLOR_GRAY2BGR)])
-        cv2.imshow(window, side_by_side)
+        annotated = segmenter.draw(frame)
+        cv2.imshow(window, annotated)
         cv2.waitKey(1)
         vector = segmenter.segment(frame)
         if vector is not None:
@@ -55,7 +53,10 @@ def collect():
     DATA_DIR.mkdir(parents=True, exist_ok=True)
     segmenter = HandSegmenter()
     cap = cv2.VideoCapture(0)
-    win = 'Left: camera | Right: HSV mask'
+    win = 'Hand landmarks — SPACE to capture'
+
+    cv2.namedWindow(win, cv2.WINDOW_NORMAL)
+    cv2.resizeWindow(win, 800, 600)
 
     X, y = [], []
     for label, direction in enumerate(DIRECTIONS):

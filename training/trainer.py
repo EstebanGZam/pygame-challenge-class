@@ -15,7 +15,7 @@ from sklearn.metrics import accuracy_score, classification_report
 DATA_DIR = Path(__file__).parent / 'data'
 MODEL_PATH = Path(__file__).parent / 'model.pkl'
 DIRECTIONS = ['up', 'down', 'left', 'right']
-N_COMPONENTS = 30
+N_COMPONENTS = 20  # input is now 42 features (21 landmarks × x,y)
 
 
 def train():

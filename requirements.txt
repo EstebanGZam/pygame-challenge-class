@@ -1,5 +1,6 @@
 pygame==2.6.1
-opencv-python-headless==4.13.0.92
+opencv-python==4.13.0.92
+mediapipe==0.10.14
 scikit-learn==1.7.2
 numpy==2.2.5
 joblib==1.5.3
